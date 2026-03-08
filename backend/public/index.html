@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CaseWatch — Track Your Court Case Like a Package</title>
+  <meta name="description"
+    content="Track every hearing, understand every stage, know exactly where your court case stands. Powered by eCourts data.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600;700&family=DM+Mono&display=swap"
+    rel="stylesheet">
+  <style>
+    /* ═══════════════════════════════════════════ */
+    /* DESIGN SYSTEM — Black & White Barrister     */
+    /* ═══════════════════════════════════════════ */
+    :root {
+      --black: #0A0A0A;
+      --white: #F7F5F0;
+      --ink: #1A1A1A;
+      --ruled: #E8E4DC;
+      --stamp-red: #B91C1C;
+      --stamp-green: #166534;
+      --court-grey: #6B6B6B;
+      --seal-gold: #A0845C;
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-sans: 'DM Sans', -apple-system, sans-serif;
+      --font-mono: 'DM Mono', monospace;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--white);
+      color: var(--ink);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ═══ NAVBAR ═══ */
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 40px;
+      border-bottom: 1px solid var(--ruled);
+      background: var(--black);
+      color: var(--white);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .navbar-brand {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .navbar-brand span {
+      color: var(--seal-gold);
+    }
+
+    .navbar a {
+      color: var(--white);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      opacity: 0.8;
+    }
+
+    .navbar a:hover {
+      opacity: 1;
+    }
+
+    /* ═══ PAGE CONTAINERS ═══ */
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    /* ═══ LANDING PAGE ═══ */
+    .hero {
+      text-align: center;
+      padding: 80px 40px 60px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .hero h1 {
+      font-family: var(--font-serif);
+      font-size: 52px;
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 20px;
+    }
+
+    .hero .subtitle {
+      font-size: 18px;
+      color: var(--court-grey);
+      max-width: 560px;
+      margin: 0 auto 40px;
+      line-height: 1.7;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 0;
+      max-width: 600px;
+      margin: 0 auto 24px;
+    }
+
+    .search-row input {
+      flex: 1;
+      padding: 14px 20px;
+      border: 2px solid var(--black);
+      font-family: var(--font-mono);
+      font-size: 15px;
+      background: #fff;
+      outline: none;
+    }
+
+    .search-row input::placeholder {
+      color: var(--court-grey);
+      font-family: var(--font-sans);
+    }
+
+    .search-row button {
+      padding: 14px 28px;
+      background: var(--black);
+      color: var(--white);
+      border: 2px solid var(--black);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .search-row button:hover {
+      background: #333;
+    }
+
+    .demo-strip {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .demo-strip p {
+      font-size: 13px;
+      color: var(--court-grey);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 500;
+    }
+
+    .demo-btns {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .demo-btn {
+      padding: 6px 14px;
+      border: 1px solid var(--ruled);
+      background: #fff;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      cursor: pointer;
+      color: var(--ink);
+    }
+
+    .demo-btn:hover {
+      border-color: var(--black);
+      background: var(--black);
+      color: var(--white);
+    }
+
+    /* How it works */
+    .how-section {
+      border-top: 1px solid var(--ruled);
+      padding: 60px 40px;
+      text-align: center;
+    }
+
+    .how-section h2 {
+      font-family: var(--font-serif);
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 40px;
+    }
+
+    .how-steps {
+      display: flex;
+      justify-content: center;
+      gap: 60px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .how-step {
+      text-align: center;
+    }
+
+    .how-step .step-num {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 2px solid var(--black);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-serif);
+      font-size: 20px;
+      font-weight: 700;
+      margin: 0 auto 12px;
+    }
+
+    .how-step h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .how-step p {
+      font-size: 13px;
+      color: var(--court-grey);
+      max-width: 180px;
+      margin: 0 auto;
+    }
+
+    /* Pain points */
+    .pain-section {
+      border-top: 1px solid var(--ruled);
+      padding: 60px 40px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .pain-section h2 {
+      font-family: var(--font-serif);
+      font-size: 28px;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .pain-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+
+    .pain-card {
+      border-left: 4px solid var(--black);
+      padding: 20px;
+    }
+
+    .pain-card h3 {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .pain-card p {
+      font-size: 14px;
+      color: var(--court-grey);
+    }
+
+    /* ═══ CAPTCHA MODAL ═══ */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 10, 10, 0.7);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: #fff;
+      padding: 40px;
+      max-width: 440px;
+      width: 90%;
+      position: relative;
+    }
+
+    .modal h2 {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      margin-bottom: 4px;
+    }
+
+    .modal .modal-sub {
+      font-size: 13px;
+      color: var(--court-grey);
+      margin-bottom: 24px;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--court-grey);
+    }
+
+    .captcha-img-wrap {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .captcha-img-wrap img {
+      border: 1px solid var(--ruled);
+      height: 50px;
+    }
+
+    .captcha-img-wrap .refresh-btn {
+      font-size: 12px;
+      color: var(--court-grey);
+      cursor: pointer;
+      text-decoration: underline;
+      background: none;
+      border: none;
+    }
+
+    .modal input[type="text"] {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid var(--ruled);
+      font-family: var(--font-mono);
+      font-size: 16px;
+      margin-bottom: 16px;
+      outline: none;
+    }
+
+    .modal input[type="text"]:focus {
+      border-color: var(--black);
+    }
+
+    .modal-submit {
+      width: 100%;
+      padding: 14px;
+      background: var(--black);
+      color: var(--white);
+      border: none;
+      font-family: var(--font-sans);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .modal-submit:hover {
+      background: #333;
+    }
+
+    .modal-submit:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .modal-error {
+      color: var(--stamp-red);
+      font-size: 13px;
+      margin-top: 8px;
+      text-align: center;
+    }
+
+    .modal-why {
+      font-size: 12px;
+      color: var(--court-grey);
+      margin-top: 16px;
+      text-align: center;
+    }
+
+    /* ═══ CASE DASHBOARD ═══ */
+    .dashboard {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 13px;
+      color: var(--court-grey);
+      text-decoration: none;
+      margin-bottom: 24px;
+      cursor: pointer;
+    }
+
+    .back-link:hover {
+      color: var(--ink);
+    }
+
+    .case-header h1 {
+      font-family: var(--font-serif);
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .case-meta {
+      font-size: 14px;
+      color: var(--court-grey);
+      margin-bottom: 4px;
+    }
+
+    .case-meta .cnr {
+      font-family: var(--font-mono);
+      font-size: 13px;
+    }
+
+    .case-header-actions {
+      margin-top: 16px;
+      margin-bottom: 32px;
+    }
+
+    .wa-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: var(--black);
+      color: var(--white);
+      border: none;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: var(--font-sans);
+    }
+
+    .wa-btn:hover {
+      background: #333;
+    }
+
+    /* Progress Bar */
+    .progress-section {
+      margin-bottom: 32px;
+    }
+
+    .progress-bar {
+      display: flex;
+      align-items: center;
+      position: relative;
+      padding: 20px 0;
+    }
+
+    .progress-node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      position: relative;
+      z-index: 1;
+    }
+
+    .progress-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-serif);
+      font-size: 14px;
+      font-weight: 700;
+      border: 2px solid var(--ruled);
+      background: var(--white);
+      color: var(--court-grey);
+      position: relative;
+    }
+
+    .progress-node.completed .progress-circle {
+      background: var(--black);
+      color: var(--white);
+      border-color: var(--black);
+    }
+
+    .progress-node.current .progress-circle {
+      background: var(--black);
+      color: var(--white);
+      border-color: var(--black);
+      box-shadow: 0 0 0 4px var(--white), 0 0 0 6px var(--seal-gold);
+    }
+
+    .progress-label {
+      font-size: 10px;
+      color: var(--court-grey);
+      margin-top: 8px;
+      text-align: center;
+      max-width: 70px;
+      line-height: 1.3;
+    }
+
+    .progress-node.current .progress-label {
+      color: var(--black);
+      font-weight: 600;
+    }
+
+    .progress-line {
+      position: absolute;
+      top: 38px;
+      left: 5%;
+      right: 5%;
+      height: 2px;
+      background: var(--ruled);
+      z-index: 0;
+    }
+
+    .progress-line-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      background: var(--black);
+    }
+
+    .stage-explain {
+      border-left: 4px solid var(--black);
+      padding: 16px 20px;
+      margin-top: 16px;
+      background: #fff;
+    }
+
+    .stage-explain strong {
+      font-family: var(--font-serif);
+      font-size: 16px;
+    }
+
+    .stage-explain p {
+      font-size: 14px;
+      color: var(--court-grey);
+      margin-top: 6px;
+    }
+
+    /* Stat cards */
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .stat-card {
+      border: 1px solid var(--ruled);
+      padding: 20px;
+      text-align: center;
+      background: #fff;
+    }
+
+    .stat-card .stat-val {
+      font-family: var(--font-serif);
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .stat-card .stat-label {
+      font-size: 11px;
+      color: var(--court-grey);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    .stat-card.gold .stat-val {
+      color: var(--seal-gold);
+    }
+
+    .stat-card.red .stat-val {
+      color: var(--stamp-red);
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid var(--ruled);
+      margin-bottom: 24px;
+      gap: 0;
+      overflow-x: auto;
+    }
+
+    .tab {
+      padding: 12px 24px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--court-grey);
+      cursor: pointer;
+      border: none;
+      background: none;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+    }
+
+    .tab.active {
+      color: var(--black);
+      border-bottom-color: var(--black);
+      font-weight: 600;
+    }
+
+    .tab:hover {
+      color: var(--ink);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Overview tab */
+    .overview-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .info-block h3 {
+      font-family: var(--font-serif);
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--ruled);
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      font-size: 14px;
+    }
+
+    .info-row .label {
+      color: var(--court-grey);
+    }
+
+    .info-row .value {
+      font-weight: 500;
+      text-align: right;
+      max-width: 60%;
+    }
+
+    /* Hearings tab */
+    .filter-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 6px 14px;
+      border: 1px solid var(--ruled);
+      background: #fff;
+      font-size: 12px;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      font-weight: 500;
+    }
+
+    .filter-btn.active {
+      background: var(--black);
+      color: var(--white);
+      border-color: var(--black);
+    }
+
+    .hearings-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .hearings-table th {
+      text-align: left;
+      padding: 10px 12px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--court-grey);
+      border-bottom: 2px solid var(--black);
+      font-weight: 600;
+    }
+
+    .hearings-table td {
+      padding: 10px 12px;
+      font-size: 14px;
+      border-bottom: 1px solid var(--ruled);
+    }
+
+    .hearings-table tr:hover {
+      background: rgba(0, 0, 0, 0.02);
+    }
+
+    .stamp {
+      display: inline-block;
+      border: 2px solid currentColor;
+      padding: 2px 8px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .stamp.productive {
+      color: var(--stamp-green);
+    }
+
+    .stamp.adjourned_lawyer {
+      color: var(--stamp-red);
+    }
+
+    .stamp.adjourned_court {
+      color: var(--court-grey);
+    }
+
+    .stamp.adjourned_other {
+      color: var(--court-grey);
+    }
+
+    .hearings-count {
+      font-size: 13px;
+      color: var(--court-grey);
+      margin-bottom: 8px;
+    }
+
+    /* Cost calc tab */
+    .calc-form {
+      max-width: 500px;
+    }
+
+    .calc-form label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 6px;
+      margin-top: 16px;
+    }
+
+    .calc-form input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid var(--ruled);
+      font-family: var(--font-mono);
+      font-size: 16px;
+      outline: none;
+    }
+
+    .calc-form input:focus {
+      border-color: var(--black);
+    }
+
+    .calc-btn {
+      margin-top: 20px;
+      padding: 14px 32px;
+      background: var(--black);
+      color: var(--white);
+      border: none;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: var(--font-sans);
+    }
+
+    .drain-result {
+      margin-top: 32px;
+      padding: 24px;
+      border: 2px solid var(--black);
+      display: none;
+    }
+
+    .drain-result.active {
+      display: block;
+    }
+
+    .drain-big {
+      font-family: var(--font-serif);
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--stamp-red);
+      margin-bottom: 4px;
+    }
+
+    .drain-sub {
+      font-size: 14px;
+      color: var(--court-grey);
+      margin-bottom: 16px;
+    }
+
+    .drain-breakdown {
+      font-size: 14px;
+    }
+
+    .drain-breakdown .row {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+    }
+
+    /* Questions tab */
+    .questions-list {
+      list-style: none;
+      counter-reset: q;
+    }
+
+    .questions-list li {
+      counter-increment: q;
+      padding: 16px 20px;
+      border-left: 4px solid var(--black);
+      margin-bottom: 12px;
+      background: #fff;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .questions-list li::before {
+      content: counter(q) ".";
+      font-family: var(--font-serif);
+      font-weight: 700;
+      margin-right: 8px;
+    }
+
+    .ctx-questions {
+      margin-top: 24px;
+    }
+
+    .ctx-questions h3 {
+      font-family: var(--font-serif);
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+
+    .ctx-questions li {
+      border-left-color: var(--seal-gold);
+    }
+
+    /* Loading */
+    .loader {
+      display: none;
+      text-align: center;
+      padding: 40px;
+      font-size: 14px;
+      color: var(--court-grey);
+    }
+
+    .loader.active {
+      display: block;
+    }
+
+    .loader::before {
+      content: '';
+      display: block;
+      width: 32px;
+      height: 32px;
+      margin: 0 auto 12px;
+      border: 3px solid var(--ruled);
+      border-top-color: var(--black);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* ═══ MOBILE ═══ */
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 32px;
+      }
+
+      .hero {
+        padding: 50px 20px 40px;
+      }
+
+      .how-steps {
+        flex-direction: column;
+        gap: 32px;
+      }
+
+      .pain-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stat-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .overview-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .progress-label {
+        font-size: 8px;
+      }
+
+      .progress-circle {
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
+      }
+
+      .navbar {
+        padding: 12px 16px;
+      }
+
+      .dashboard {
+        padding: 24px 16px;
+      }
+
+      .tabs {
+        gap: 0;
+      }
+
+      .tab {
+        padding: 10px 14px;
+        font-size: 13px;
+      }
+
+      .case-header h1 {
+        font-size: 22px;
+      }
+
+      .search-row {
+        flex-direction: column;
+      }
+
+      .search-row button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ═══ NAVBAR ═══ -->
+  <nav class="navbar">
+    <div class="navbar-brand" onclick="showPage('landing')">
+      <span>⚖</span> CaseWatch
+    </div>
+    <a href="#" onclick="showPage('landing')">Home</a>
+  </nav>
+
+  <!-- ═══ PAGE 1: LANDING ═══ -->
+  <div id="page-landing" class="page active">
+    <section class="hero">
+      <h1>Your Court Case,<br>Finally Explained.</h1>
+      <p class="subtitle">
+        Don't wait for your lawyer to call.<br>
+        Track every hearing, understand every stage,<br>
+        know exactly where your case stands.
+      </p>
+      <div class="search-row">
+        <input type="text" id="cnr-input" placeholder="Enter 16-digit CNR Number" maxlength="16">
+        <button onclick="handleSearch()">Search →</button>
+      </div>
+      <div class="demo-strip">
+        <p>Or try a demo case</p>
+        <div class="demo-btns" id="demo-btns">
+          <!-- loaded dynamically -->
+        </div>
+      </div>
+    </section>
+
+    <section class="how-section">
+      <h2>How It Works</h2>
+      <div class="how-steps">
+        <div class="how-step">
+          <div class="step-num">1</div>
+          <h3>Enter CNR</h3>
+          <p>Any Indian court case number from eCourts.gov.in</p>
+        </div>
+        <div class="how-step">
+          <div class="step-num">2</div>
+          <h3>Solve CAPTCHA</h3>
+          <p>One-time verification. We cache the data forever.</p>
+        </div>
+        <div class="how-step">
+          <div class="step-num">3</div>
+          <h3>See Everything</h3>
+          <p>Progress, hearings, costs, lawyer stats — all in English.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="pain-section">
+      <h2>The Problem We Solve</h2>
+      <div class="pain-grid">
+        <div class="pain-card">
+          <h3>Codes, not language</h3>
+          <p>eCourts shows "NNFR" and "PE". CaseWatch says "Not heard today" and "Your side is presenting evidence."</p>
+        </div>
+        <div class="pain-card">
+          <h3>Money down the drain</h3>
+          <p>Every adjournment costs you ₹2,000–₹15,000. CaseWatch calculates your exact loss.</p>
+        </div>
+        <div class="pain-card">
+          <h3>No visibility</h3>
+          <p>Is your case stuck? Is your lawyer doing their job? CaseWatch shows the data, you decide.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ═══ CAPTCHA MODAL ═══ -->
+  <div class="modal-overlay" id="captcha-modal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeCaptchaModal()">&times;</button>
+      <h2>One Quick Verification</h2>
+      <p class="modal-sub">eCourts.gov.in requires a CAPTCHA. We only ask once per case.</p>
+      <div class="captcha-img-wrap">
+        <img id="captcha-img" src="" alt="CAPTCHA">
+        <button class="refresh-btn" onclick="refreshCaptcha()">↻ Refresh</button>
+      </div>
+      <input type="text" id="captcha-input" placeholder="Type the characters above" autocomplete="off">
+      <button class="modal-submit" id="captcha-submit" onclick="submitCaptcha()">Search Live →</button>
+      <div class="modal-error" id="captcha-error"></div>
+      <p class="modal-why">Why CAPTCHA? eCourts.gov.in requires it for every lookup. We cache results so you'll never
+        see this again for this case.</p>
+    </div>
+  </div>
+
+  <!-- ═══ PAGE 2: CASE DASHBOARD ═══ -->
+  <div id="page-dashboard" class="page">
+    <div class="dashboard">
+      <a class="back-link" onclick="showPage('landing')">← Back to Search</a>
+
+      <!-- Case Header -->
+      <div class="case-header">
+        <h1 id="dash-title">—</h1>
+        <p class="case-meta"><span id="dash-casetype"></span> • <span id="dash-court"></span></p>
+        <p class="case-meta">CNR: <span class="cnr" id="dash-cnr"></span> • Filed: <span id="dash-filed"></span> •
+          Registered: <span id="dash-regd"></span></p>
+        <div class="case-header-actions">
+          <button class="wa-btn" id="wa-share-btn" onclick="shareWhatsApp()">📲 Share on WhatsApp</button>
+        </div>
+      </div>
+
+      <!-- Progress Bar -->
+      <div class="progress-section">
+        <div class="progress-bar" id="progress-bar">
+          <div class="progress-line">
+            <div class="progress-line-fill" id="progress-fill"></div>
+          </div>
+          <!-- nodes generated by JS -->
+        </div>
+        <div class="stage-explain" id="stage-explain">
+          <strong id="stage-name">—</strong>
+          <p id="stage-desc">—</p>
+        </div>
+      </div>
+
+      <!-- Stat Cards -->
+      <div class="stat-row">
+        <div class="stat-card gold">
+          <div class="stat-val" id="stat-next-date">—</div>
+          <div class="stat-label">Next Hearing</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="stat-total">—</div>
+          <div class="stat-label">Total Hearings</div>
+        </div>
+        <div class="stat-card red">
+          <div class="stat-val" id="stat-adjourned">—</div>
+          <div class="stat-label">Adjourned</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="stat-stage">—</div>
+          <div class="stat-label">Stage</div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab active" data-tab="overview">Overview</button>
+        <button class="tab" data-tab="hearings">Hearing History</button>
+        <button class="tab" data-tab="calc">Cost Calculator</button>
+        <button class="tab" data-tab="questions">Questions to Ask</button>
+      </div>
+
+      <!-- Tab 1: Overview -->
+      <div class="tab-content active" id="tab-overview">
+        <div class="overview-grid">
+          <div class="info-block" id="parties-block">
+            <h3>Parties</h3>
+          </div>
+          <div class="info-block" id="details-block">
+            <h3>Case Details</h3>
+          </div>
+        </div>
+        <div style="margin-top: 24px;" id="acts-block"></div>
+      </div>
+
+      <!-- Tab 2: Hearings -->
+      <div class="tab-content" id="tab-hearings">
+        <div class="filter-row" id="filter-row"></div>
+        <div class="hearings-count" id="hearings-count"></div>
+        <table class="hearings-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Date</th>
+              <th>Purpose</th>
+              <th>Type</th>
+            </tr>
+          </thead>
+          <tbody id="hearings-tbody"></tbody>
+        </table>
+      </div>
+
+      <!-- Tab 3: Cost Calculator -->
+      <div class="tab-content" id="tab-calc">
+        <h3 style="font-family: var(--font-serif); margin-bottom: 4px;">How Much Has This Case Cost You?</h3>
+        <p style="font-size: 14px; color: var(--court-grey); margin-bottom: 16px;">Enter your per-hearing costs to
+          calculate the total financial drain.</p>
+        <div class="calc-form">
+          <label>Lawyer fee per hearing (₹)</label>
+          <input type="number" id="calc-lawyer" value="2000" placeholder="e.g. 2000">
+          <label>Travel cost per hearing (₹)</label>
+          <input type="number" id="calc-travel" value="500" placeholder="e.g. 500">
+          <label>Daily lost wages (₹)</label>
+          <input type="number" id="calc-wages" value="1000" placeholder="e.g. 1000">
+          <button class="calc-btn" onclick="calculateDrain()">Calculate →</button>
+        </div>
+        <div class="drain-result" id="drain-result">
+          <div class="drain-big" id="drain-total">—</div>
+          <div class="drain-sub">wasted on non-productive hearings</div>
+          <div class="drain-breakdown" id="drain-breakdown"></div>
+          <p style="margin-top: 16px; font-size: 13px; color: var(--court-grey);" id="drain-insight"></p>
+        </div>
+      </div>
+
+      <!-- Tab 4: Questions -->
+      <div class="tab-content" id="tab-questions">
+        <h3 style="font-family: var(--font-serif); margin-bottom: 4px;" id="q-heading">—</h3>
+        <p style="font-size: 14px; color: var(--court-grey); margin-bottom: 20px;" id="q-sub"></p>
+        <ul class="questions-list" id="questions-list"></ul>
+        <div class="ctx-questions" id="ctx-questions" style="display:none">
+          <h3>Based on Your Last Hearing</h3>
+          <ul class="questions-list" id="ctx-questions-list"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading overlay -->
+  <div class="loader" id="loader">Loading case data...</div>
+
+  <script>
+    /* ═══════════════════════════════════════════════ */
+    /* CaseWatch Frontend Logic                        */
+    /* ═══════════════════════════════════════════════ */
+    const API = '';  // same origin
+    let currentCNR = '';
+    let currentSessionId = '';
+    let currentCaseData = null;
+
+    // ── Page Navigation ──
+    function showPage(page) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('page-' + page).classList.add('active');
+      if (page === 'landing') { currentCNR = ''; currentCaseData = null; }
+      window.scrollTo(0, 0);
+    }
+
+    // ── Load demo cases on page load ──
+    async function loadDemoCases() {
+      try {
+        const res = await fetch(API + '/api/demo-cases');
+        const cases = await res.json();
+        const wrap = document.getElementById('demo-btns');
+        wrap.innerHTML = cases.map(c =>
+          `<button class="demo-btn" onclick="loadCase('${c.cnr}')">${c.cnr}</button>`
+        ).join('');
+      } catch (e) { console.error('Failed to load demo cases:', e); }
+    }
+
+    // ── Search handler ──
+    function handleSearch() {
+      const cnr = document.getElementById('cnr-input').value.trim().toUpperCase();
+      if (!cnr || cnr.length < 10) return alert('Please enter a valid CNR number.');
+      loadCase(cnr);
+    }
+
+    // ── Load a case (demo → cache → live captcha) ──
+    async function loadCase(cnr) {
+      currentCNR = cnr.toUpperCase();
+      document.getElementById('loader').classList.add('active');
+
+      try {
+        // Try cached/demo first
+        const res = await fetch(API + '/api/case/' + currentCNR);
+        if (res.ok) {
+          const data = await res.json();
+          document.getElementById('loader').classList.remove('active');
+          renderDashboard(data);
+          return;
+        }
+      } catch (e) { }
+
+      // Not cached — need live CAPTCHA
+      document.getElementById('loader').classList.remove('active');
+      openCaptchaModal();
+    }
+
+    // ── CAPTCHA Flow ──
+    async function openCaptchaModal() {
+      document.getElementById('captcha-modal').classList.add('active');
+      document.getElementById('captcha-error').textContent = '';
+      document.getElementById('captcha-input').value = '';
+      await refreshCaptcha();
+    }
+
+    function closeCaptchaModal() {
+      document.getElementById('captcha-modal').classList.remove('active');
+    }
+
+    async function refreshCaptcha() {
+      document.getElementById('captcha-img').src = '';
+      try {
+        const res = await fetch(API + '/api/captcha?courtType=district');
+        const data = await res.json();
+        currentSessionId = data.sessionId;
+        document.getElementById('captcha-img').src = data.captchaDataUrl;
+      } catch (e) {
+        document.getElementById('captcha-error').textContent = 'Failed to load CAPTCHA. Try again.';
+      }
+    }
+
+    async function submitCaptcha() {
+      const captcha = document.getElementById('captcha-input').value.trim();
+      if (!captcha) return;
+
+      const btn = document.getElementById('captcha-submit');
+      btn.disabled = true; btn.textContent = 'Searching...';
+      document.getElementById('captcha-error').textContent = '';
+
+      try {
+        const res = await fetch(API + '/api/case/cnr/live', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ cnr: currentCNR, captcha, sessionId: currentSessionId })
+        });
+        const result = await res.json();
+
+        if (result.success === false || result.error) {
+          document.getElementById('captcha-error').textContent = result.message || 'CAPTCHA failed. Try again.';
+          await refreshCaptcha();
+          document.getElementById('captcha-input').value = '';
+          btn.disabled = false; btn.textContent = 'Search Live →';
+          return;
+        }
+
+        closeCaptchaModal();
+        renderDashboard(result.data || result);
+      } catch (e) {
+        document.getElementById('captcha-error').textContent = 'Network error. Please try again.';
+      } finally {
+        btn.disabled = false; btn.textContent = 'Search Live →';
+      }
+    }
+
+    // ── RENDER DASHBOARD ──
+    function renderDashboard(data) {
+      currentCaseData = data;
+      showPage('dashboard');
+
+      // Header
+      document.getElementById('dash-title').textContent = data.title || 'Untitled Case';
+      document.getElementById('dash-casetype').textContent = data.caseType || '';
+      document.getElementById('dash-court').textContent = data.court || '';
+      document.getElementById('dash-cnr').textContent = data.cnr || '';
+      document.getElementById('dash-filed').textContent = data.filedDate || data['Filing Date'] || '-';
+      document.getElementById('dash-regd').textContent = data.registrationDate || '-';
+
+      // Stats
+      const hearings = data.hearings || [];
+      const productive = hearings.filter(h => h.classification === 'productive').length;
+      const adjourned = hearings.length - productive;
+      document.getElementById('stat-next-date').textContent = data.nextHearingDate || 'N/A';
+      document.getElementById('stat-total').textContent = hearings.length;
+      document.getElementById('stat-adjourned').textContent = adjourned + ' (' + (hearings.length > 0 ? Math.round(adjourned / hearings.length * 100) : 0) + '%)';
+      document.getElementById('stat-stage').textContent = (data.currentStage || 1) + '/8';
+
+      // Progress bar
+      renderProgressBar(data.currentStage || 1);
+
+      // Stage explanation
+      document.getElementById('stage-name').textContent = 'Stage ' + data.currentStage + ' — ' + (data.caseStageExplicit || data.nextHearingPurpose || '');
+      document.getElementById('stage-desc').textContent = data.stageDescription || getStageDesc(data.currentStage);
+
+      // Overview tab
+      renderOverview(data);
+
+      // Hearings tab
+      renderHearings(hearings);
+
+      // Drain calc (reset)
+      document.getElementById('drain-result').classList.remove('active');
+
+      // Questions tab
+      loadQuestions();
+    }
+
+    const STAGE_NAMES = ['Filing', 'Admission', 'Notice & W.S.', 'Issues', "Plaintiff's Evidence", "Defendant's Evidence", 'Arguments', 'Judgment'];
+
+    function renderProgressBar(current) {
+      const bar = document.getElementById('progress-bar');
+      // Keep the line elements
+      const existingLine = bar.querySelector('.progress-line');
+      bar.innerHTML = '';
+      bar.appendChild(existingLine);
+
+      for (let i = 1; i <= 8; i++) {
+        const node = document.createElement('div');
+        node.className = 'progress-node' + (i < current ? ' completed' : i === current ? ' current' : '');
+        node.innerHTML = `
+            <div class="progress-circle">${i < current ? '✓' : i}</div>
+            <div class="progress-label">${STAGE_NAMES[i - 1]}</div>
+        `;
+        bar.appendChild(node);
+      }
+
+      const fill = document.getElementById('progress-fill');
+      fill.style.width = ((current - 1) / 7 * 100) + '%';
+    }
+
+    function renderOverview(data) {
+      const p = document.getElementById('parties-block');
+      p.innerHTML = `<h3>Parties</h3>
+        <div class="info-row"><span class="label">Petitioner</span><span class="value">${data.petitioner || 'Unknown'}</span></div>
+        <div class="info-row"><span class="label">Advocate</span><span class="value">${data.petitionerAdvocate || 'Unknown'}</span></div>
+        <div class="info-row"><span class="label">Respondent</span><span class="value">${data.respondent || 'Unknown'}</span></div>
+        <div class="info-row"><span class="label">Advocate</span><span class="value">${data.respondentAdvocate || 'Unknown'}</span></div>`;
+
+      const d = document.getElementById('details-block');
+      d.innerHTML = `<h3>Case Details</h3>
+        <div class="info-row"><span class="label">Case Type</span><span class="value">${data.caseType || '-'}</span></div>
+        <div class="info-row"><span class="label">Court</span><span class="value">${data.court || '-'}</span></div>
+        <div class="info-row"><span class="label">State</span><span class="value">${data.state || '-'}</span></div>
+        <div class="info-row"><span class="label">District</span><span class="value">${data.district || '-'}</span></div>
+        <div class="info-row"><span class="label">Filing Date</span><span class="value">${data.filedDate || data['Filing Date'] || '-'}</span></div>
+        <div class="info-row"><span class="label">Registration Date</span><span class="value">${data.registrationDate || '-'}</span></div>`;
+
+      const a = document.getElementById('acts-block');
+      if (data.acts && data.acts.length > 0) {
+        a.innerHTML = '<div class="info-block"><h3>Acts & Sections</h3>' +
+          data.acts.map(act => `<div class="info-row"><span class="label">${act.act}</span><span class="value">${act.section}</span></div>`).join('') +
+          '</div>';
+      } else { a.innerHTML = ''; }
+    }
+
+    function renderHearings(hearings) {
+      // Filters
+      const types = ['all', 'productive', 'adjourned_lawyer', 'adjourned_court', 'adjourned_other'];
+      const labels = ['All', 'Productive', 'Adj: Lawyer', 'Adj: Court', 'Adj: Other'];
+      const filterRow = document.getElementById('filter-row');
+      filterRow.innerHTML = types.map((t, i) =>
+        `<button class="filter-btn${i === 0 ? ' active' : ''}" onclick="filterHearings('${t}', this)">${labels[i]}</button>`
+      ).join('');
+
+      window._allHearings = hearings;
+      showFilteredHearings('all');
+    }
+
+    function filterHearings(type, btn) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      showFilteredHearings(type);
+    }
+
+    function showFilteredHearings(type) {
+      const hearings = window._allHearings || [];
+      const filtered = type === 'all' ? hearings : hearings.filter(h => h.classification === type);
+      document.getElementById('hearings-count').textContent = `Showing ${filtered.length} of ${hearings.length} hearings`;
+
+      const stampLabel = { productive: 'PRODUCTIVE', adjourned_lawyer: 'ADJ: LAWYER', adjourned_court: 'ADJ: COURT', adjourned_other: 'ADJ: OTHER' };
+      const tbody = document.getElementById('hearings-tbody');
+      tbody.innerHTML = filtered.map((h, i) => `
+        <tr>
+            <td>${h.id || (filtered.length - i)}</td>
+            <td>${h.businessOnDate || h.date || '-'}</td>
+            <td>${h.businessTranslated || h.purpose || '-'}</td>
+            <td><span class="stamp ${h.classification}">${stampLabel[h.classification] || 'OTHER'}</span></td>
+        </tr>
+    `).join('');
+    }
+
+    // ── Cost Calculator ──
+    async function calculateDrain() {
+      if (!currentCaseData) return;
+      const lawyerFeePerHearing = parseInt(document.getElementById('calc-lawyer').value) || 2000;
+      const travelCost = parseInt(document.getElementById('calc-travel').value) || 500;
+      const lostWagesPerDay = parseInt(document.getElementById('calc-wages').value) || 1000;
+
+      try {
+        const res = await fetch(API + '/api/case/' + currentCaseData.cnr + '/drain', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ lawyerFeePerHearing, travelCost, lostWagesPerDay })
+        });
+        const data = await res.json();
+
+        document.getElementById('drain-total').textContent = data.drain.formatted;
+        document.getElementById('drain-breakdown').innerHTML = `
+            <div class="row"><span>Lawyer fees wasted</span><span>₹${data.drain.lawyerFeesWasted.toLocaleString('en-IN')}</span></div>
+            <div class="row"><span>Travel wasted</span><span>₹${data.drain.travelWasted.toLocaleString('en-IN')}</span></div>
+            <div class="row"><span>Lost wages</span><span>₹${data.drain.wagesLost.toLocaleString('en-IN')}</span></div>
+            <div class="row" style="border-top:1px solid var(--ruled);margin-top:8px;padding-top:8px;font-weight:700">
+                <span>Total hearings: ${data.summary.totalHearings} (${data.summary.productiveHearings} productive, ${data.summary.adjournedHearings} adjourned)</span>
+            </div>`;
+        document.getElementById('drain-insight').textContent = data.insight;
+        document.getElementById('drain-result').classList.add('active');
+      } catch (e) {
+        alert('Failed to calculate. Please try again.');
+      }
+    }
+
+    // ── Questions ──
+    async function loadQuestions() {
+      if (!currentCaseData) return;
+      try {
+        const res = await fetch(API + '/api/case/' + currentCaseData.cnr + '/questions');
+        const data = await res.json();
+
+        document.getElementById('q-heading').textContent = 'What to Ask Your Lawyer at the Next Hearing';
+        document.getElementById('q-sub').textContent = 'Stage: ' + data.stageName + ' — ' + (data.stageDescription || '');
+
+        document.getElementById('questions-list').innerHTML =
+          data.questions.map(q => `<li>${q}</li>`).join('');
+
+        if (data.contextualQuestions && data.contextualQuestions.length > 0) {
+          document.getElementById('ctx-questions').style.display = 'block';
+          document.getElementById('ctx-questions-list').innerHTML =
+            data.contextualQuestions.map(q => `<li>${q}</li>`).join('');
+        } else {
+          document.getElementById('ctx-questions').style.display = 'none';
+        }
+      } catch (e) { console.error('Questions error:', e); }
+    }
+
+    // ── WhatsApp Share ──
+    async function shareWhatsApp() {
+      if (!currentCaseData) return;
+      try {
+        const res = await fetch(API + '/api/case/' + currentCaseData.cnr + '/whatsapp');
+        const data = await res.json();
+        window.open(data.whatsappUrl, '_blank');
+      } catch (e) {
+        alert('Failed to generate share link.');
+      }
+    }
+
+    // ── Tabs ──
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+      });
+    });
+
+    // ── Stage descriptions fallback ──
+    function getStageDesc(stage) {
+      const descs = {
+        1: 'The case has been filed and is awaiting formal admission by the court.',
+        2: 'The court is reviewing the filing and deciding whether to admit the case.',
+        3: 'Notices are being served and written statements are being exchanged.',
+        4: 'The court is identifying the key issues that need to be decided.',
+        5: 'The plaintiff is presenting their evidence — documents and witnesses.',
+        6: 'The defendant is presenting their evidence to counter the claims.',
+        7: 'Both sides are making their final arguments before the court.',
+        8: 'The judge is preparing to deliver the final judgment.'
+      };
+      return descs[stage] || '';
+    }
+
+    // ── Enter key on inputs ──
+    document.getElementById('cnr-input').addEventListener('keydown', e => { if (e.key === 'Enter') handleSearch(); });
+    document.getElementById('captcha-input').addEventListener('keydown', e => { if (e.key === 'Enter') submitCaptcha(); });
+
+    // ── Init ──
+    loadDemoCases();
+  </script>
+</body>
+
+</html>

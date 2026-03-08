@@ -1,0 +1,62 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Environment variables (NEVER commit secrets)
+.env
+.env.local
+.env.*.local
+backend/.env
+
+# Build output
+dist/
+build/
+frontend/dist/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor / OS
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+.vscode/
+.idea/
+
+# Vite
+frontend/.vite/
+
+# Misc
+*.tmp
+*.bak
+claude-sonnet/
+context_handoff.md.resolved
+error_report.md.resolved
+implementation_plan.md
+vakalat_context_handoff.md
+CONTEXT.md
+
+# Backend debug / test artifacts
+backend/html_analysis.txt
+backend/last_ecourts_response.*
+backend/output.json
+backend/test-parser-output.json
+backend/test_output.json
+backend/capt.txt
+backend/*.png
+backend/petitioner.txt
+backend/tables.txt
+backend/analyze_html.js
+backend/dump_*.js
+backend/test-*.js
+backend/test_*.js
+PBMO*.txt
+casewatch-ui.jsx
+casewatch_implementation_v2.md
+casewatch_problem_statement.md
