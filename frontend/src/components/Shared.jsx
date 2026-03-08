@@ -1,4 +1,5 @@
-// ─── FONT LOADER ─────────────────────────────────────────────────────────────
+import logoImg from "../assets/logo.jpeg";
+
 export const FontLoader = () => (
     <style>{`
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600&family=Epilogue:wght@300;400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
@@ -107,9 +108,12 @@ export const StickyNav = ({ variant = "landing", setPage }) => (
         display: "flex", alignItems: "center", padding: "0 clamp(24px,4vw,80px)"
     }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: 1280, margin: "0 auto" }}>
-            <div onClick={() => setPage("landing")} style={{ cursor: "pointer", display: "flex", alignItems: "baseline", gap: 2 }}>
-                <span style={{ fontFamily: "var(--font-mono)", fontWeight: 600, color: "#fff", fontSize: "1rem", letterSpacing: "0.08em" }}>VAKA</span>
-                <span style={{ fontFamily: "var(--font-sans)", fontWeight: 800, color: "#fff", fontSize: "1rem", letterSpacing: "0.04em" }}>LAT</span>
+            <div onClick={() => setPage("landing")} style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 12 }}>
+                <img src={logoImg} alt="Vakalat Logo" style={{ height: 32, borderRadius: 6, objectFit: "contain" }} />
+                <div style={{ display: "flex", alignItems: "baseline", gap: 2 }}>
+                    <span style={{ fontFamily: "var(--font-mono)", fontWeight: 600, color: "#fff", fontSize: "1rem", letterSpacing: "0.08em" }}>VAKA</span>
+                    <span style={{ fontFamily: "var(--font-sans)", fontWeight: 800, color: "#fff", fontSize: "1rem", letterSpacing: "0.04em" }}>LAT</span>
+                </div>
             </div>
             <div style={{ display: "flex", gap: 40, alignItems: "center" }}>
                 {variant === "caseview" && (
@@ -136,9 +140,12 @@ export const Footer = () => (
         <div style={{ maxWidth: 1280, margin: "0 auto" }}>
             <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1.2fr", gap: 48 }}>
                 <div>
-                    <div style={{ display: "flex", alignItems: "baseline", gap: 2, marginBottom: 16 }}>
-                        <span style={{ fontFamily: "var(--font-mono)", fontWeight: 600, color: "#fff", fontSize: "1rem" }}>VAKA</span>
-                        <span style={{ fontFamily: "var(--font-sans)", fontWeight: 800, color: "#fff", fontSize: "1rem" }}>LAT</span>
+                    <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+                        <img src={logoImg} alt="Vakalat Logo" style={{ height: 40, borderRadius: 8, objectFit: "contain" }} />
+                        <div style={{ display: "flex", alignItems: "baseline", gap: 2 }}>
+                            <span style={{ fontFamily: "var(--font-mono)", fontWeight: 600, color: "#fff", fontSize: "1rem" }}>VAKA</span>
+                            <span style={{ fontFamily: "var(--font-sans)", fontWeight: 800, color: "#fff", fontSize: "1rem" }}>LAT</span>
+                        </div>
                     </div>
                     <p style={{ fontFamily: "var(--font-sans)", fontWeight: 400, color: "var(--ink-50)", fontSize: "0.875rem", lineHeight: 1.7, maxWidth: 280 }}>
                         Making the Indian courts system legible for families who deserve to understand what is happening to their cases.

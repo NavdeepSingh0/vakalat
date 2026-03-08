@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Vakalat — Redesigned Hero Preview</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600&family=Epilogue:wght@300;400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --ink-100: #0A0A0A;
+    --ink-90:  #1A1A1A;
+    --ink-70:  #404040;
+    --ink-50:  #737373;
+    --ink-30:  #ABABAB;
+    --ink-15:  #D6D6D6;
+    --ink-08:  #EBEBEB;
+    --ink-04:  #F5F5F5;
+    --ink-00:  #FFFFFF;
+    --font-serif: 'Playfair Display', Georgia, serif;
+    --font-sans:  'Epilogue', sans-serif;
+    --font-mono:  'IBM Plex Mono', monospace;
+    --ease-out: cubic-bezier(0.0,0.0,0.2,1.0);
+    --ease-in-out: cubic-bezier(0.4,0.0,0.2,1.0);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: auto; }
+  body { font-family: var(--font-sans); background: var(--ink-100); color: var(--ink-00); overflow-x: hidden; }
+
+  /* ── NAV ── */
+  nav {
+    background: var(--ink-100);
+    height: 64px;
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    padding: 0 clamp(24px,4vw,80px);
+    border-bottom: 1px solid #1a1a1a;
+  }
+  .nav-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%; max-width: 1400px; margin: 0 auto;
+  }
+  .logo { display: flex; align-items: baseline; gap: 2px; cursor: pointer; }
+  .logo-mono { font-family: var(--font-mono); font-weight: 600; color: #fff; font-size: 1rem; letter-spacing: 0.08em; }
+  .logo-sans { font-family: var(--font-sans); font-weight: 800; color: #fff; font-size: 1rem; letter-spacing: 0.04em; }
+  .nav-links { display: flex; gap: 40px; align-items: center; }
+  .nav-link {
+    font-family: var(--font-sans); font-weight: 600; font-size: 0.75rem;
+    letter-spacing: 0.1em; color: var(--ink-30); cursor: pointer;
+    text-transform: uppercase; text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .nav-link:hover { color: #fff; }
+
+  /* ══════════════════════════════════════
+     HERO — scroll-pinned, animation driven
+  ══════════════════════════════════════ */
+  .hero-outer {
+    position: relative;
+    /* 300vh = scroll distance before page continues */
+    height: 300vh;
+    background: var(--ink-100);
+  }
+
+  .hero-sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    width: 100%;
+    display: grid;
+    /* Left: content, Right: Lady Justice */
+    grid-template-columns: 1fr 1fr;
+    overflow: hidden;
+  }
+
+  /* ── LEFT PANEL ── */
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px clamp(32px,4vw,80px) 80px clamp(32px,5vw,100px);
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-eyebrow {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-50);
+    margin-bottom: 32px;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: fadeUp 0.7s var(--ease-out) 0.2s forwards;
+  }
+
+  .hero-h1 {
+    font-family: var(--font-serif);
+    font-weight: 900;
+    font-size: clamp(3rem, 5.5vw, 5.5rem);
+    letter-spacing: -0.03em;
+    line-height: 0.93;
+    color: var(--ink-00);
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.8s var(--ease-out) 0.35s forwards;
+  }
+  .hero-h1 em { font-style: italic; color: var(--ink-30); }
+
+  .hero-rule {
+    display: block;
+    width: 0;
+    height: 2px;
+    background: var(--ink-50);
+    margin: 36px 0;
+    animation: expandRule 0.9s var(--ease-out) 0.7s forwards;
+  }
+  @keyframes expandRule { to { width: 56px; } }
+
+  .hero-body {
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+    color: var(--ink-50);
+    max-width: 420px;
+    line-height: 1.75;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: fadeUp 0.8s var(--ease-out) 0.55s forwards;
+  }
+
+  /* Animated stat that changes with scroll */
+  .hero-stat-block {
+    margin-top: 40px;
+    padding: 24px 0;
+    border-top: 1px solid var(--ink-70);
+    border-bottom: 1px solid var(--ink-70);
+    opacity: 0;
+    animation: fadeUp 0.8s var(--ease-out) 0.75s forwards;
+  }
+  .hero-stat-num {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 2.2rem;
+    color: var(--ink-00);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  .hero-stat-label {
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: 0.8rem;
+    color: var(--ink-50);
+    margin-top: 4px;
+    letter-spacing: 0.02em;
+    transition: opacity 0.3s ease;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-top: 40px;
+    opacity: 0;
+    animation: fadeUp 0.8s var(--ease-out) 0.9s forwards;
+  }
+  .btn-primary {
+    background: var(--ink-00);
+    color: var(--ink-100);
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 14px 28px;
+    border: none;
+    border-radius: 0;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .btn-primary:hover { background: var(--ink-15); }
+  .btn-ghost {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 0.75rem;
+    color: var(--ink-50);
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: color 0.2s;
+    text-decoration: none;
+  }
+  .btn-ghost:hover { color: var(--ink-00); }
+
+  /* Scroll nudge at bottom left */
+  .hero-scroll-nudge {
+    position: absolute;
+    bottom: 36px;
+    left: clamp(32px,5vw,100px);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    opacity: 0;
+    animation: fadeUp 0.8s var(--ease-out) 1.2s forwards;
+  }
+  .nudge-line {
+    width: 32px;
+    height: 1px;
+    background: var(--ink-70);
+    position: relative;
+    overflow: hidden;
+  }
+  .nudge-line::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: var(--ink-30);
+    animation: slideRight 2s ease-in-out 1.5s infinite;
+  }
+  @keyframes slideRight { 0%{left:-100%} 60%{left:100%} 100%{left:100%} }
+  .nudge-text {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.16em;
+    color: var(--ink-70);
+    text-transform: uppercase;
+  }
+
+  /* Progress dots — right edge of left panel */
+  .progress-dots {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-right: 24px;
+    z-index: 10;
+  }
+  .pdot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--ink-70);
+    transition: background 0.3s ease, transform 0.3s ease;
+  }
+  .pdot.active {
+    background: var(--ink-00);
+    transform: scale(1.5);
+  }
+
+  /* ── RIGHT PANEL — Justice ── */
+  .hero-right {
+    position: relative;
+    overflow: hidden;
+    background: var(--ink-100);
+    border-left: 1px solid #1a1a1a;
+  }
+
+  /* Subtle grain texture */
+  .hero-right::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.6;
+  }
+
+  /* Radial vignette glow behind statue */
+  .justice-glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 70% at 50% 55%, #1a1a1a 0%, #0A0A0A 100%);
+    z-index: 0;
+  }
+
+  /* SVG statue container */
+  .justice-stage {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+  }
+  .justice-stage svg {
+    height: 88vh;
+    width: auto;
+    max-width: 90%;
+  }
+
+  /* Phase label — bottom of right panel */
+  .justice-phase {
+    position: absolute;
+    bottom: 36px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    z-index: 5;
+    white-space: nowrap;
+  }
+  .phase-rule { display: block; width: 32px; height: 1px; background: var(--ink-70); }
+  .phase-text {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.18em;
+    color: var(--ink-50);
+    text-transform: uppercase;
+    transition: opacity 0.25s ease;
+  }
+
+  /* Progress bar — right edge of right panel */
+  .justice-progress-bar {
+    position: absolute;
+    right: 20px;
+    top: 15%;
+    bottom: 15%;
+    width: 1px;
+    background: #1a1a1a;
+    z-index: 5;
+  }
+  .justice-progress-fill {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    background: linear-gradient(to bottom, var(--ink-50), var(--ink-30));
+    transition: height 0.05s linear;
+  }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ══════════════════════════════════════
+     SECTIONS BELOW HERO
+  ══════════════════════════════════════ */
+  .below-hero { background: var(--ink-100); }
+
+  /* Stats band */
+  .stats-band {
+    background: #111;
+    border-top: 1px solid #1a1a1a;
+    border-bottom: 1px solid #1a1a1a;
+    padding: 40px clamp(24px,4vw,80px);
+  }
+  .stats-inner {
+    max-width: 1280px; margin: 0 auto;
+    display: flex; justify-content: space-between; align-items: center; gap: 32px;
+  }
+  .stat-item { text-align: center; }
+  .stat-num { font-family: var(--font-mono); font-weight: 600; font-size: clamp(1.4rem,2.5vw,2rem); color: #fff; }
+  .stat-desc { font-family: var(--font-sans); font-size: 0.75rem; color: var(--ink-50); margin-top: 4px; max-width: 130px; line-height: 1.5; }
+  .stat-div { width: 1px; height: 36px; background: var(--ink-70); }
+
+  /* How it works */
+  .how-section { background: var(--ink-00); padding: clamp(64px,8vh,120px) clamp(24px,4vw,80px); }
+  .how-inner { max-width: 1280px; margin: 0 auto; }
+  .s-eyebrow { font-family: var(--font-sans); font-weight: 700; font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-50); }
+  .s-rule { display: block; width: 56px; height: 3px; background: var(--ink-100); margin: 16px 0; }
+  .s-h2 { font-family: var(--font-serif); font-weight: 700; font-size: clamp(1.5rem,2.5vw,2.1rem); color: var(--ink-100); max-width: 480px; margin-bottom: 64px; }
+  .steps-grid { display: grid; grid-template-columns: repeat(3,1fr); }
+  .step { padding: 40px 32px; background: var(--ink-04); }
+  .step:nth-child(2) { background: var(--ink-00); }
+  .step-num { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.16em; color: var(--ink-50); font-weight: 600; }
+  .step-div { border-top: 1px solid var(--ink-15); margin: 16px 0; }
+  .step-title { font-family: var(--font-serif); font-weight: 700; font-size: 1.3rem; color: var(--ink-100); }
+  .step-body { font-family: var(--font-sans); font-size: 0.875rem; color: var(--ink-70); line-height: 1.7; margin-top: 10px; }
+  .step-code { background: var(--ink-100); padding: 10px 14px; margin-top: 14px; font-family: var(--font-mono); color: #fff; font-size: 0.8rem; }
+
+  /* Problem */
+  .problem-section { background: var(--ink-100); padding: clamp(64px,8vh,120px) clamp(24px,4vw,80px); }
+  .problem-inner { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: 7fr 5fr; gap: 64px; align-items: center; }
+  blockquote { font-family: var(--font-serif); font-style: italic; font-size: clamp(1.6rem,3vw,2.5rem); color: #fff; line-height: 1.2; }
+  .problem-source { font-family: var(--font-sans); font-size: 0.8rem; color: var(--ink-50); margin-top: 20px; }
+  .pstat-num { font-family: var(--font-mono); font-weight: 600; color: #fff; font-size: 2.2rem; }
+  .pstat-label { font-family: var(--font-sans); color: var(--ink-30); font-size: 0.875rem; margin-top: 4px; max-width: 200px; line-height: 1.5; }
+  .pstat-rule { border-top: 1px solid rgba(255,255,255,0.1); margin: 20px 0; }
+
+  /* Features */
+  .features-section { background: var(--ink-00); padding: clamp(64px,8vh,120px) clamp(24px,4vw,80px); }
+  .features-inner { max-width: 1280px; margin: 0 auto; }
+  .features-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 0; border: 3px solid var(--ink-100); }
+  .feature { padding: 36px 30px; }
+  .feature:nth-child(odd) { border-right: 3px solid var(--ink-100); }
+  .feature:nth-child(-n+6) { border-bottom: 3px solid var(--ink-100); }
+  .feat-num { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.14em; color: var(--ink-50); font-weight: 600; }
+  .feat-rule { border-top: 1px solid var(--ink-15); margin: 14px 0; }
+  .feat-title { font-family: var(--font-serif); font-weight: 700; font-size: 1.25rem; color: var(--ink-100); }
+  .feat-body { font-family: var(--font-sans); font-size: 0.875rem; color: var(--ink-70); line-height: 1.7; margin-top: 10px; }
+
+  /* Trust */
+  .trust-section { background: var(--ink-100); padding: 80px clamp(24px,4vw,80px); }
+  .trust-inner { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; background: #1a1a1a; }
+  .trust-item { background: #0f0f0f; padding: 40px; }
+  .trust-label { font-family: var(--font-sans); font-weight: 700; font-size: 0.65rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-50); }
+  .trust-body { font-family: var(--font-serif); font-size: 1rem; color: var(--ink-30); line-height: 1.6; margin-top: 14px; }
+
+  /* Footer */
+  footer { background: var(--ink-100); padding: 64px clamp(24px,4vw,80px); border-top: 1px solid #1a1a1a; }
+  .footer-grid { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1.2fr; gap: 48px; }
+  .footer-desc { font-family: var(--font-sans); color: var(--ink-50); font-size: 0.875rem; line-height: 1.7; max-width: 280px; margin-top: 12px; }
+  .footer-built { font-family: var(--font-sans); font-size: 0.8rem; color: var(--ink-70); margin-top: 20px; }
+  .footer-col-label { font-family: var(--font-sans); font-weight: 700; color: var(--ink-30); font-size: 0.65rem; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 14px; }
+  .footer-link { font-family: var(--font-sans); color: var(--ink-50); font-size: 0.875rem; line-height: 2.2; display: block; }
+  .footer-legal { font-family: var(--font-sans); color: var(--ink-70); font-size: 0.75rem; line-height: 1.8; }
+  .footer-bottom { max-width: 1280px; margin: 48px auto 0; padding-top: 24px; border-top: 1px solid #1a1a1a; display: flex; justify-content: space-between; }
+  .footer-copy { font-family: var(--font-mono); color: var(--ink-70); font-size: 0.75rem; }
+
+  /* reveal */
+  [data-reveal] { opacity: 0; transform: translateY(24px); transition: opacity 0.65s var(--ease-out), transform 0.65s var(--ease-out); }
+  [data-reveal].vis { opacity: 1; transform: translateY(0); }
+  [data-delay="1"] { transition-delay: 80ms; }
+  [data-delay="2"] { transition-delay: 160ms; }
+  [data-delay="3"] { transition-delay: 240ms; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <div class="logo"><span class="logo-mono">VAKA</span><span class="logo-sans">LAT</span></div>
+    <div class="nav-links">
+      <a class="nav-link">TRACK A CASE</a>
+      <a class="nav-link">HOW IT WORKS</a>
+      <a class="nav-link">ABOUT</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<div class="hero-outer" id="heroOuter">
+  <div class="hero-sticky" id="heroSticky">
+
+    <!-- LEFT: Content -->
+    <div class="hero-left">
+      <p class="hero-eyebrow">LEGAL CASE TRACKER — INDIA</p>
+
+      <h1 class="hero-h1" id="heroHeadline">
+        Your case.<br/>Explained.<br/><em>Finally.</em>
+      </h1>
+
+      <span class="hero-rule"></span>
+
+      <p class="hero-body">
+        eCourts data, decoded for real people. Enter your CNR number and understand your case stage, hearing history, and what justice is actually costing you.
+      </p>
+
+      <!-- Stat that responds to scroll phase -->
+      <div class="hero-stat-block">
+        <p class="hero-stat-num" id="statNum">4.5 Cr</p>
+        <p class="hero-stat-label" id="statLabel">cases pending in Indian courts today</p>
+      </div>
+
+      <div class="hero-cta">
+        <button class="btn-primary">TRACK MY CASE →</button>
+        <a class="btn-ghost">Free. No registration.</a>
+      </div>
+
+      <div class="hero-scroll-nudge">
+        <div class="nudge-line"></div>
+        <span class="nudge-text">Scroll to see justice delayed</span>
+      </div>
+
+      <!-- Phase progress dots -->
+      <div class="progress-dots" id="progressDots">
+        <div class="pdot active" id="dot0"></div>
+        <div class="pdot" id="dot1"></div>
+        <div class="pdot" id="dot2"></div>
+        <div class="pdot" id="dot3"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Lady Justice -->
+    <div class="hero-right">
+      <div class="justice-glow"></div>
+
+      <div class="justice-stage">
+        <svg viewBox="0 0 300 560" fill="none" xmlns="http://www.w3.org/2000/svg" id="justiceSvg">
+          <defs>
+            <radialGradient id="mg" cx="45%" cy="35%" r="60%">
+              <stop offset="0%" stop-color="#E0E0E0"/>
+              <stop offset="50%" stop-color="#C0C0C0"/>
+              <stop offset="100%" stop-color="#787878"/>
+            </radialGradient>
+            <radialGradient id="fg" cx="45%" cy="38%" r="52%">
+              <stop offset="0%" stop-color="#D8D8D8"/>
+              <stop offset="100%" stop-color="#989898"/>
+            </radialGradient>
+            <radialGradient id="bgGlow" cx="50%" cy="45%" r="50%">
+              <stop offset="0%" stop-color="#1a1a1a" stop-opacity="1"/>
+              <stop offset="100%" stop-color="#0A0A0A" stop-opacity="1"/>
+            </radialGradient>
+            <filter id="ss" x="-20%" y="-10%" width="160%" height="140%">
+              <feDropShadow dx="-12" dy="16" stdDeviation="20" flood-color="#000" flood-opacity="0.85"/>
+            </filter>
+          </defs>
+
+          <g filter="url(#ss)">
+            <!-- PLINTH -->
+            <rect x="80" y="520" width="140" height="20" rx="2" fill="#505050"/>
+            <rect x="90" y="515" width="120" height="8" rx="1" fill="#606060"/>
+
+            <!-- ROBES / BASE -->
+            <path d="M95 310 Q72 400 78 505 Q110 525 150 526 Q190 525 222 505 Q228 400 205 310 Z" fill="url(#mg)"/>
+            <path d="M112 318 Q108 410 112 500" stroke="#AAAAAA" stroke-width="1" fill="none" opacity="0.45"/>
+            <path d="M150 315 Q148 415 150 502" stroke="#BBBBBB" stroke-width="0.8" fill="none" opacity="0.35"/>
+            <path d="M185 318 Q188 410 184 500" stroke="#AAAAAA" stroke-width="1" fill="none" opacity="0.45"/>
+            <path d="M130 312 Q126 420 129 503" stroke="#999" stroke-width="0.6" fill="none" opacity="0.3"/>
+            <path d="M168 312 Q170 420 168 503" stroke="#999" stroke-width="0.6" fill="none" opacity="0.3"/>
+
+            <!-- TORSO -->
+            <path d="M108 205 Q96 255 95 310 L205 310 Q204 255 192 205 Z" fill="url(#mg)"/>
+            <path d="M108 220 Q150 238 192 220" stroke="#BBBBBB" stroke-width="1.5" fill="none" opacity="0.55"/>
+            <path d="M103 258 Q150 272 197 258" stroke="#AAAAAA" stroke-width="1" fill="none" opacity="0.4"/>
+            <!-- Drape across chest -->
+            <path d="M108 205 Q130 215 150 210 Q170 215 192 205 Q180 220 150 225 Q120 220 108 205Z" fill="#B8B8B8" opacity="0.3"/>
+
+            <!-- NECK -->
+            <rect x="133" y="180" width="34" height="30" rx="5" fill="url(#fg)"/>
+
+            <!-- HEAD GROUP -->
+            <g id="headGroup" style="transform-origin:150px 185px">
+              <ellipse cx="150" cy="158" rx="35" ry="38" fill="url(#fg)"/>
+              <!-- Hair -->
+              <path d="M115 152 Q118 116 150 109 Q182 116 185 152" fill="#B0B0B0"/>
+              <path d="M115 152 Q110 162 112 172" stroke="#A0A0A0" stroke-width="1.5" fill="none"/>
+              <path d="M185 152 Q190 162 188 172" stroke="#A0A0A0" stroke-width="1.5" fill="none"/>
+              <!-- Hair detail -->
+              <path d="M118 148 Q113 136 120 128 Q126 120 122 112" stroke="#9A9A9A" stroke-width="1.2" fill="none"/>
+              <path d="M182 148 Q187 136 180 128 Q174 120 178 112" stroke="#9A9A9A" stroke-width="1.2" fill="none"/>
+              <path d="M135 110 Q132 104 136 100" stroke="#A8A8A8" stroke-width="1" fill="none"/>
+              <path d="M155 109 Q158 103 154 99" stroke="#A8A8A8" stroke-width="1" fill="none"/>
+              <!-- BLINDFOLD -->
+              <rect x="112" y="147" width="76" height="16" rx="2" fill="#707070" opacity="0.92"/>
+              <path d="M112 153 Q150 158 188 153" stroke="#606060" stroke-width="1" fill="none"/>
+              <!-- Blindfold tails -->
+              <path d="M188 149 Q204 143 208 150 Q204 157 188 155Z" fill="#686868"/>
+              <path d="M112 149 Q96 143 92 150 Q96 157 112 155Z" fill="#686868"/>
+              <!-- Serene lips -->
+              <path d="M137 176 Q150 180 163 176" stroke="#909090" stroke-width="1.3" fill="none" id="mouth"/>
+            </g>
+
+            <!-- SWORD ARM (left side, holds sword) -->
+            <g id="swordArm" style="transform-origin:108px 215px">
+              <path d="M108 215 Q86 238 82 278 Q80 298 84 310" stroke="url(#mg)" stroke-width="20" stroke-linecap="round" fill="none"/>
+              <!-- Hand -->
+              <ellipse cx="84" cy="313" rx="10" ry="8" fill="url(#fg)"/>
+              <!-- Sword -->
+              <line x1="84" y1="321" x2="80" y2="430" stroke="#C0C0C0" stroke-width="3.5"/>
+              <!-- Crossguard -->
+              <line x1="68" y1="328" x2="100" y2="328" stroke="#B0B0B0" stroke-width="4.5" stroke-linecap="round"/>
+              <!-- Pommel -->
+              <ellipse cx="84" cy="320" rx="7" ry="6" fill="#AAAAAA"/>
+              <!-- Sword tip -->
+              <path d="M77 428 L80 438 L83 428Z" fill="#C0C0C0"/>
+            </g>
+
+            <!-- SCALES ARM (right, raised) -->
+            <g id="scalesArm">
+              <path d="M192 208 Q216 188 222 165 Q225 152 220 144" stroke="url(#mg)" stroke-width="20" stroke-linecap="round" fill="none"/>
+              <!-- Fist -->
+              <ellipse cx="219" cy="139" rx="13" ry="10" fill="url(#fg)"/>
+              <!-- Fingers detail -->
+              <path d="M208 134 Q214 130 220 132" stroke="#B0B0B0" stroke-width="1.5" fill="none"/>
+
+              <!-- SCALES ASSEMBLY -->
+              <g id="scalesAssembly" style="transform-origin:219px 120px">
+                <!-- Rod from fist up -->
+                <line x1="219" y1="130" x2="219" y2="100" stroke="#C8C8C8" stroke-width="2.5"/>
+                <!-- Balance beam -->
+                <line id="beam" x1="159" y1="100" x2="279" y2="100" stroke="#C8C8C8" stroke-width="3"/>
+                <!-- Center pivot ornament -->
+                <circle cx="219" cy="100" r="5" fill="#B0B0B0"/>
+                <circle cx="219" cy="100" r="2" fill="#D8D8D8"/>
+
+                <!-- LEFT PAN -->
+                <g id="leftPan">
+                  <line x1="172" y1="100" x2="163" y2="135" stroke="#B0B0B0" stroke-width="1.5"/>
+                  <line x1="159" y1="100" x2="163" y2="135" stroke="#B0B0B0" stroke-width="1.5"/>
+                  <line x1="146" y1="100" x2="163" y2="135" stroke="#B0B0B0" stroke-width="1.5"/>
+                  <path d="M146 135 Q163 141 180 135" stroke="#B0B0B0" stroke-width="2.5" fill="none"/>
+                  <!-- Pan dish -->
+                  <path d="M148 136 Q163 142 178 136 Q178 143 163 145 Q148 143 148 136Z" fill="#888888" opacity="0.6"/>
+                </g>
+
+                <!-- RIGHT PAN -->
+                <g id="rightPan">
+                  <line x1="266" y1="100" x2="275" y2="135" stroke="#B0B0B0" stroke-width="1.5"/>
+                  <line x1="279" y1="100" x2="275" y2="135" stroke="#B0B0B0" stroke-width="1.5"/>
+                  <line x1="292" y1="100" x2="275" y2="135" stroke="#B0B0B0" stroke-width="1.5"/>
+                  <path d="M258 135 Q275 141 292 135" stroke="#B0B0B0" stroke-width="2.5" fill="none"/>
+                  <!-- Pan dish -->
+                  <path d="M260 136 Q275 142 290 136 Q290 143 275 145 Q260 143 260 136Z" fill="#888888" opacity="0.6"/>
+                </g>
+              </g>
+            </g>
+          </g>
+
+          <!-- Floor shadow -->
+          <ellipse cx="150" cy="536" rx="90" ry="10" fill="#000" opacity="0.6"/>
+        </svg>
+      </div>
+
+      <!-- Phase label -->
+      <div class="justice-phase">
+        <span class="phase-rule"></span>
+        <p class="phase-text" id="phaseText">BALANCED — SCALES OF JUSTICE</p>
+        <span class="phase-rule"></span>
+      </div>
+
+      <!-- Scroll progress bar -->
+      <div class="justice-progress-bar">
+        <div class="justice-progress-fill" id="progressFill" style="height:0%"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BELOW HERO -->
+<div class="below-hero">
+
+  <!-- Stats band -->
+  <div class="stats-band">
+    <div class="stats-inner">
+      <div class="stat-item" data-reveal>
+        <p class="stat-num">4.5 Cr</p>
+        <p class="stat-desc">pending civil cases in India</p>
+      </div>
+      <div class="stat-div"></div>
+      <div class="stat-item" data-reveal data-delay="1">
+        <p class="stat-num">17 yrs</p>
+        <p class="stat-desc">average case duration</p>
+      </div>
+      <div class="stat-div"></div>
+      <div class="stat-item" data-reveal data-delay="2">
+        <p class="stat-num">64%</p>
+        <p class="stat-desc">hearings end in adjournment</p>
+      </div>
+      <div class="stat-div"></div>
+      <div class="stat-item" data-reveal data-delay="3">
+        <p class="stat-num">₹1.2L</p>
+        <p class="stat-desc">avg family legal spend per decade</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- How it works -->
+  <section class="how-section">
+    <div class="how-inner">
+      <p class="s-eyebrow" data-reveal>HOW IT WORKS</p>
+      <span class="s-rule" data-reveal data-delay="1"></span>
+      <h2 class="s-h2" data-reveal data-delay="2">Three steps to understanding your case.</h2>
+      <div class="steps-grid">
+        <div class="step" data-reveal>
+          <p class="step-num">STEP 01</p><div class="step-div"></div>
+          <h3 class="step-title">Enter Your CNR</h3>
+          <p class="step-body">The 16-digit identifier printed on every court notice and filing receipt.</p>
+          <div class="step-code">MHNA010000012019</div>
+        </div>
+        <div class="step" data-reveal data-delay="1">
+          <p class="step-num">STEP 02</p><div class="step-div"></div>
+          <h3 class="step-title">We Fetch Live Data</h3>
+          <p class="step-body">Vakalat connects directly to the eCourts portal — latest hearing data, pulled in real time.</p>
+        </div>
+        <div class="step" data-reveal data-delay="2">
+          <p class="step-num">STEP 03</p><div class="step-div"></div>
+          <h3 class="step-title">Read Plain English</h3>
+          <p class="step-body">Every code — 'PE', 'NNFR', 'WS' — translated into a sentence your family can understand.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- The Problem -->
+  <section class="problem-section">
+    <div class="problem-inner">
+      <div data-reveal>
+        <p style="font-family:var(--font-sans);font-weight:700;font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-30);margin-bottom:24px;">THE SCALE OF THE PROBLEM</p>
+        <blockquote>"The average Indian family spends 17 years and lakhs of rupees on a court case — without ever understanding what is happening."</blockquote>
+        <p class="problem-source">— NJDG Case Flow Analysis, 2023</p>
+      </div>
+      <div data-reveal data-delay="2">
+        <div><p class="pstat-num">64%</p><p class="pstat-label">of hearings end in adjournment with no progress</p></div>
+        <div class="pstat-rule"></div>
+        <div><p class="pstat-num">3 Crore</p><p class="pstat-label">civil cases pending for more than 5 years</p></div>
+        <div class="pstat-rule"></div>
+        <div><p class="pstat-num">₹1.2L</p><p class="pstat-label">average total legal spend per family over a decade</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features-section">
+    <div class="features-inner">
+      <p class="s-eyebrow" data-reveal>FEATURES</p>
+      <span class="s-rule" data-reveal data-delay="1" style="background:var(--ink-100)"></span>
+      <h2 class="s-h2" data-reveal data-delay="2" style="color:var(--ink-100);margin-top:16px;">Everything your lawyer knows. Now you do too.</h2>
+      <div class="features-grid">
+        <div class="feature" data-reveal><p class="feat-num">01</p><div class="feat-rule"></div><h3 class="feat-title">Case Stage Tracker</h3><p class="feat-body">See exactly where your case sits in the 8-stage Indian court process.</p></div>
+        <div class="feature" data-reveal data-delay="1"><p class="feat-num">02</p><div class="feat-rule"></div><h3 class="feat-title">Plain-English Hearings</h3><p class="feat-body">Codes like 'NNFR', 'WS', 'PE' translated into plain language.</p></div>
+        <div class="feature" data-reveal><p class="feat-num">03</p><div class="feat-rule"></div><h3 class="feat-title">Financial Drain Calculator</h3><p class="feat-body">The real cost of every adjournment, calculated for your case.</p></div>
+        <div class="feature" data-reveal data-delay="1"><p class="feat-num">04</p><div class="feat-rule"></div><h3 class="feat-title">Lawyer Questions Generator</h3><p class="feat-body">4–5 specific questions to ask at your next hearing.</p></div>
+        <div class="feature" data-reveal><p class="feat-num">05</p><div class="feat-rule"></div><h3 class="feat-title">Delay Accountability Report</h3><p class="feat-body">Compare adjournment rates and identify who is causing delays.</p></div>
+        <div class="feature" data-reveal data-delay="1"><p class="feat-num">06</p><div class="feat-rule"></div><h3 class="feat-title">Pre-Hearing Prep Card</h3><p class="feat-body">Checklist, stage guidance, countdown — walk in prepared.</p></div>
+        <div class="feature" data-reveal><p class="feat-num">07</p><div class="feat-rule"></div><h3 class="feat-title">Speedy Trial Alert</h3><p class="feat-body">Alert to Article 21 rights if your case exceeds NJDG benchmarks.</p></div>
+        <div class="feature" data-reveal data-delay="1"><p class="feat-num">08</p><div class="feat-rule"></div><h3 class="feat-title">Add to Calendar</h3><p class="feat-body">One click to add your next hearing to Google Calendar.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust -->
+  <section class="trust-section">
+    <div class="trust-inner">
+      <div class="trust-item" data-reveal><p class="trust-label">SOURCE</p><p class="trust-body">All data fetched directly from eCourts.gov.in — the official Government of India courts database.</p></div>
+      <div class="trust-item" data-reveal data-delay="1"><p class="trust-label">PRIVACY</p><p class="trust-body">Vakalat does not store personal data or share it with third parties. CNR numbers are never logged.</p></div>
+      <div class="trust-item" data-reveal data-delay="2"><p class="trust-label">ACCESS</p><p class="trust-body">Free for all users. No account, no registration, no subscription. Vakalat is a public utility.</p></div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-grid">
+      <div>
+        <div class="logo"><span class="logo-mono">VAKA</span><span class="logo-sans">LAT</span></div>
+        <p class="footer-desc">Making the Indian courts system legible for families who deserve to understand what is happening to their cases.</p>
+        <p class="footer-built">Built at Hack2Skill 2026</p>
+      </div>
+      <div>
+        <p class="footer-col-label">PRODUCT</p>
+        <a class="footer-link">Track a Case</a><a class="footer-link">How It Works</a><a class="footer-link">Demo Cases</a>
+      </div>
+      <div>
+        <p class="footer-col-label">DATA SOURCES</p>
+        <a class="footer-link">eCourts India</a><a class="footer-link">NJDG</a><a class="footer-link">NIC</a>
+      </div>
+      <div>
+        <p class="footer-col-label">LEGAL</p>
+        <p class="footer-legal">Vakalat is not a law firm and does not provide legal advice. Data sourced from public court records.</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2026 VAKALAT</span>
+      <span class="footer-copy">DATA: NJDG / ECOURTS.GOV.IN</span>
+    </div>
+  </footer>
+</div>
+
+<script>
+  // ── Reveal observer ──
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('[data-reveal]').forEach(el => obs.observe(el));
+
+  // ── Scroll phases ──
+  const phases = [
+    {
+      at: 0,
+      label: "BALANCED — SCALES OF JUSTICE",
+      statNum: "4.5 Cr", statLabel: "cases pending in Indian courts today",
+      dot: 0
+    },
+    {
+      at: 0.28,
+      label: "THE WEIGHT OF DELAY",
+      statNum: "17 yrs", statLabel: "average time to resolve a civil case",
+      dot: 1
+    },
+    {
+      at: 0.58,
+      label: "THE SWORD LOWERS",
+      statNum: "64%", statLabel: "of all hearings end in adjournment",
+      dot: 2
+    },
+    {
+      at: 0.82,
+      label: "JUSTICE DENIED",
+      statNum: "₹1.2L", statLabel: "average cost to an Indian family per decade",
+      dot: 3
+    }
+  ];
+
+  const scalesAssembly = document.getElementById('scalesAssembly');
+  const headGroup      = document.getElementById('headGroup');
+  const swordArm       = document.getElementById('swordArm');
+  const progressFill   = document.getElementById('progressFill');
+  const phaseText      = document.getElementById('phaseText');
+  const statNum        = document.getElementById('statNum');
+  const statLabel      = document.getElementById('statLabel');
+  const dots           = [0,1,2,3].map(i => document.getElementById('dot'+i));
+
+  let currentPhase = 0;
+
+  function setPhase(i) {
+    if (currentPhase === i) return;
+    currentPhase = i;
+    const p = phases[i];
+
+    // Update label
+    phaseText.style.opacity = '0';
+    setTimeout(() => { phaseText.textContent = p.label; phaseText.style.opacity = '1'; }, 200);
+    phaseText.style.transition = 'opacity 0.25s ease';
+
+    // Update stat
+    statNum.style.opacity = '0';
+    statLabel.style.opacity = '0';
+    setTimeout(() => {
+      statNum.textContent = p.statNum;
+      statLabel.textContent = p.statLabel;
+      statNum.style.opacity = '1';
+      statLabel.style.opacity = '1';
+    }, 200);
+    statNum.style.transition = 'opacity 0.3s ease';
+    statLabel.style.transition = 'opacity 0.3s ease';
+
+    // Update dots
+    dots.forEach((d, idx) => d.classList.toggle('active', idx === p.dot));
+  }
+
+  function onScroll() {
+    const container = document.getElementById('heroOuter');
+    const rect = container.getBoundingClientRect();
+    const scrollHeight = container.offsetHeight - window.innerHeight;
+    const scrolled = -rect.top;
+    const progress = Math.min(Math.max(scrolled / scrollHeight, 0), 1);
+
+    // Progress bar
+    progressFill.style.height = (progress * 100) + '%';
+
+    // Scales tilt: 0 → -32deg
+    const tilt = progress * -32;
+    scalesAssembly.style.transform = `rotate(${tilt}deg)`;
+
+    // Head bow: 0 → 18deg
+    const bow = progress * 18;
+    headGroup.style.transform = `rotate(${bow}deg)`;
+
+    // Sword arm droop: 0 → 10deg
+    const droop = progress * 10;
+    swordArm.style.transform = `rotate(${droop}deg)`;
+
+    // Phase switching
+    for (let i = phases.length - 1; i >= 0; i--) {
+      if (progress >= phases[i].at) { setPhase(i); break; }
+    }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+</script>
+</body>
+</html>

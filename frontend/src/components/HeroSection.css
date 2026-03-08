@@ -1,0 +1,437 @@
+/* ══════════════════════════════════════
+   FIXED NAV
+   Replaces StickyNav for the dark hero.
+   height: 64px matches existing StickyNav.
+   z-index: 200 sits above hero sticky (default).
+══════════════════════════════════════ */
+.hero-nav {
+    background: var(--ink-100);
+    height: 64px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    padding: 0 clamp(24px, 4vw, 80px);
+    border-bottom: 1px solid #1a1a1a;
+}
+
+.hero-nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.logo {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+    cursor: pointer;
+}
+
+.logo-mono {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    color: #fff;
+    font-size: 1rem;
+    letter-spacing: 0.08em;
+}
+
+.logo-sans {
+    font-family: var(--font-sans);
+    font-weight: 800;
+    color: #fff;
+    font-size: 1rem;
+    letter-spacing: 0.04em;
+}
+
+.hero-nav-links {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+}
+
+.hero-nav-link {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: var(--ink-30);
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: color 0.2s ease;
+}
+
+.hero-nav-link:hover {
+    color: #fff;
+}
+
+
+/* ══════════════════════════════════════
+   HERO OUTER
+   Tall container that creates scroll room.
+   height: 300vh = animation plays over 3 screens.
+   background fills the scroll area black so
+   no white flash appears above/below sticky.
+══════════════════════════════════════ */
+.hero-outer {
+    position: relative;
+    height: 300vh;
+    background: var(--ink-100);
+}
+
+
+/* ══════════════════════════════════════
+   HERO STICKY
+   Pins to viewport. Splits into two columns.
+   top: 64px = clears the fixed nav exactly.
+   height: calc(100vh - 64px) fills remaining viewport.
+══════════════════════════════════════ */
+.hero-sticky {
+    position: sticky;
+    top: 64px;
+    height: calc(100vh - 64px);
+    width: 100%;
+    overflow: hidden;
+    background: var(--ink-100);
+    position: sticky;
+}
+
+
+/* ══════════════════════════════════════
+   CANVAS BACKGROUND — fills entire hero
+══════════════════════════════════════ */
+.hero-canvas-bg {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 45%;
+    height: 100%;
+    z-index: 1;
+    border-left: 1px solid #1a1a1a;
+}
+
+
+/* ══════════════════════════════════════
+   LEFT PANEL — overlays on top of animation
+══════════════════════════════════════ */
+.hero-left {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px clamp(32px, 4vw, 80px) 80px clamp(32px, 5vw, 100px);
+    max-width: 55%;
+    height: 100%;
+}
+
+/* Eyebrow */
+.hero-eyebrow {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-50);
+    margin-bottom: 32px;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: heroFadeUp 0.7s cubic-bezier(0, 0, 0.2, 1) 0.2s forwards;
+}
+
+/* Headline */
+.hero-h1 {
+    font-family: var(--font-serif);
+    font-weight: 900;
+    font-size: clamp(3rem, 5.5vw, 5.5rem);
+    letter-spacing: -0.03em;
+    line-height: 0.93;
+    color: var(--ink-00);
+    opacity: 0;
+    transform: translateY(20px);
+    animation: heroFadeUp 0.8s cubic-bezier(0, 0, 0.2, 1) 0.35s forwards;
+}
+
+.hero-h1 em {
+    font-style: italic;
+    color: var(--ink-30);
+}
+
+/* Rule */
+.hero-rule {
+    display: block;
+    width: 0;
+    height: 2px;
+    background: var(--ink-50);
+    margin: 36px 0;
+    animation: heroExpandRule 0.9s cubic-bezier(0, 0, 0.2, 1) 0.7s forwards;
+}
+
+@keyframes heroExpandRule {
+    to {
+        width: 56px;
+    }
+}
+
+/* Body */
+.hero-body {
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+    color: var(--ink-50);
+    max-width: 420px;
+    line-height: 1.75;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: heroFadeUp 0.8s cubic-bezier(0, 0, 0.2, 1) 0.55s forwards;
+}
+
+/* ── STAT BLOCK ───────────────────────── */
+.hero-stat-block {
+    margin-top: 40px;
+    padding: 24px 0;
+    border-top: 1px solid var(--ink-70);
+    border-bottom: 1px solid var(--ink-70);
+    opacity: 0;
+    animation: heroFadeUp 0.8s cubic-bezier(0, 0, 0.2, 1) 0.75s forwards;
+}
+
+.hero-stat-num {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 2.2rem;
+    color: var(--ink-00);
+    transition: opacity 0.3s ease;
+}
+
+.hero-stat-label {
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: 0.8rem;
+    color: var(--ink-50);
+    margin-top: 4px;
+    letter-spacing: 0.02em;
+    transition: opacity 0.3s ease;
+}
+
+/* CTA row */
+.hero-cta {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-top: 40px;
+    opacity: 0;
+    animation: heroFadeUp 0.8s cubic-bezier(0, 0, 0.2, 1) 0.9s forwards;
+}
+
+.hero-left .btn-primary {
+    background: var(--ink-00);
+    color: var(--ink-100);
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 14px 28px;
+    border: none;
+    border-radius: 0;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.hero-left .btn-primary:hover {
+    background: var(--ink-15);
+}
+
+.btn-ghost {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 0.75rem;
+    color: var(--ink-50);
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.btn-ghost:hover {
+    color: var(--ink-00);
+}
+
+/* Scroll nudge — bottom left */
+.hero-scroll-nudge {
+    position: absolute;
+    bottom: 36px;
+    left: clamp(32px, 5vw, 100px);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    opacity: 0;
+    animation: heroFadeUp 0.8s cubic-bezier(0, 0, 0.2, 1) 1.2s forwards;
+}
+
+.nudge-line {
+    width: 32px;
+    height: 1px;
+    background: var(--ink-70);
+    position: relative;
+    overflow: hidden;
+}
+
+.nudge-line::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: var(--ink-30);
+    animation: nudgeSlide 2s ease-in-out 1.5s infinite;
+}
+
+@keyframes nudgeSlide {
+    0% {
+        left: -100%;
+    }
+
+    60% {
+        left: 100%;
+    }
+
+    100% {
+        left: 100%;
+    }
+}
+
+.nudge-text {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.16em;
+    color: var(--ink-70);
+    text-transform: uppercase;
+}
+
+/* Progress dots — right edge of left panel */
+.progress-dots {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-right: 24px;
+    z-index: 10;
+}
+
+.pdot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--ink-70);
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.pdot.active {
+    background: var(--ink-00);
+    transform: scale(1.5);
+}
+
+
+/* Radial glow behind statue */
+.justice-glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 70% at 50% 55%, #1a1a1a 0%, #0A0A0A 100%);
+    z-index: 0;
+}
+
+/* Canvas stage */
+.justice-stage {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+/* Canvas — portrait crop, fills right panel vertically */
+.justice-canvas {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+}
+
+/* Loading dots */
+.justice-loader {
+    position: absolute;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    color: var(--ink-50);
+    z-index: 3;
+}
+
+/* Phase label — bottom centre of right panel */
+.justice-phase {
+    position: absolute;
+    bottom: 36px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    z-index: 5;
+    white-space: nowrap;
+}
+
+.phase-rule {
+    display: block;
+    width: 32px;
+    height: 1px;
+    background: var(--ink-70);
+}
+
+.phase-text {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.18em;
+    color: var(--ink-50);
+    text-transform: uppercase;
+    transition: opacity 0.25s ease;
+}
+
+/* Progress bar — far right edge */
+.justice-progress-bar {
+    position: absolute;
+    right: 20px;
+    top: 15%;
+    bottom: 15%;
+    width: 1px;
+    background: #1a1a1a;
+    z-index: 5;
+}
+
+.justice-progress-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(to bottom, var(--ink-50), var(--ink-30));
+    transition: height 0.05s linear;
+}
+
+/* ── Load animation ── */
+@keyframes heroFadeUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

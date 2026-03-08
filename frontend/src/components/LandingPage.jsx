@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { StickyNav, Footer } from "./Shared";
 import { useReveal } from "../utils";
+import HeroSection from "./HeroSection";
 
 const LandingPage = ({ setPage }) => {
     useReveal();
@@ -28,65 +29,8 @@ const LandingPage = ({ setPage }) => {
     }, [counted]);
 
     return (
-        <div style={{ background: "var(--ink-00)" }}>
-            <StickyNav setPage={setPage} />
-
-            {/* HERO */}
-            <section style={{
-                minHeight: "92vh", display: "grid", gridTemplateColumns: "7fr 5fr",
-                alignItems: "center", padding: "clamp(80px,12vh,140px) clamp(24px,4vw,80px)",
-                maxWidth: 1280, margin: "0 auto", gap: 80
-            }}>
-                <div>
-                    <p data-reveal style={{ fontFamily: "var(--font-sans)", fontWeight: 600, fontSize: "0.7rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--ink-50)", marginBottom: 24 }}>
-                        LEGAL CASE TRACKER — INDIA
-                    </p>
-                    <h1 data-reveal data-delay="1" style={{ fontFamily: "var(--font-serif)", fontWeight: 900, fontSize: "clamp(3.5rem,8vw,7rem)", letterSpacing: "-0.03em", lineHeight: 0.92, color: "var(--ink-100)" }}>
-                        Your case.<br />
-                        Explained.<br />
-                        <em>Finally.</em>
-                    </h1>
-                    <span data-reveal data-delay="2" className="line-wipe" style={{ display: "block", width: 64, height: 3, background: "var(--ink-100)", margin: "32px 0" }} />
-                    <p data-reveal data-delay="3" style={{ fontFamily: "var(--font-sans)", fontWeight: 400, fontSize: "clamp(1rem,1.5vw,1.2rem)", color: "var(--ink-70)", maxWidth: 520, lineHeight: 1.65 }}>
-                        eCourts data, decoded for real people. Enter your CNR number and instantly understand your case stage, hearing history, what your lawyer should be doing, and what it's costing you.
-                    </p>
-                    <div data-reveal data-delay="4" style={{ display: "flex", gap: 16, alignItems: "center", marginTop: 48 }}>
-                        <button onClick={() => setPage("form")} style={{
-                            background: "var(--ink-100)", color: "#fff",
-                            fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.8rem", letterSpacing: "0.08em", textTransform: "uppercase",
-                            padding: "14px 28px", border: "none", borderRadius: 0, cursor: "pointer",
-                            transition: "background 0.15s ease"
-                        }}
-                            onMouseEnter={e => e.target.style.background = "var(--ink-70)"}
-                            onMouseLeave={e => e.target.style.background = "var(--ink-100)"}>
-                            TRACK MY CASE →
-                        </button>
-                        <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.8rem", color: "var(--ink-50)" }}>Free. No registration.</span>
-                    </div>
-                </div>
-
-                {/* Hero data card */}
-                <div data-reveal data-delay="2" style={{ background: "var(--ink-100)", padding: 40, borderRadius: 0 }}>
-                    <p style={{ fontFamily: "var(--font-mono)", color: "var(--ink-50)", fontSize: "0.65rem", letterSpacing: "0.12em", textTransform: "uppercase" }}>SAMPLE CASE — MHNA010000012019</p>
-                    <p style={{ fontFamily: "var(--font-serif)", fontWeight: 600, color: "#fff", fontSize: "1.2rem", marginTop: 8 }}>Civil Judge Senior Division<br />Nagpur</p>
-                    <div style={{ borderTop: "1px solid rgba(255,255,255,0.12)", margin: "24px 0" }} />
-                    <p style={{ fontFamily: "var(--font-sans)", fontWeight: 600, color: "var(--ink-50)", fontSize: "0.7rem", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 8 }}>CURRENT STAGE</p>
-                    <p style={{ fontFamily: "var(--font-sans)", fontWeight: 700, color: "#fff", fontSize: "1rem" }}>Plaintiff's Evidence</p>
-                    <p style={{ fontFamily: "var(--font-sans)", fontWeight: 400, color: "var(--ink-30)", fontSize: "0.875rem", marginTop: 4, lineHeight: 1.5 }}>The petitioner is presenting documents and witnesses to support their claim.</p>
-                    <div style={{ borderTop: "1px solid rgba(255,255,255,0.12)", margin: "24px 0" }} />
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-                        <div>
-                            <p style={{ fontFamily: "var(--font-sans)", fontWeight: 600, color: "var(--ink-50)", fontSize: "0.65rem", letterSpacing: "0.1em", textTransform: "uppercase" }}>NEXT HEARING</p>
-                            <p style={{ fontFamily: "var(--font-mono)", fontWeight: 500, color: "#fff", fontSize: "1rem", marginTop: 4 }}>14 APR 2025</p>
-                        </div>
-                        <div>
-                            <p style={{ fontFamily: "var(--font-sans)", fontWeight: 600, color: "var(--ink-50)", fontSize: "0.65rem", letterSpacing: "0.1em", textTransform: "uppercase" }}>ADJOURNMENTS</p>
-                            <p style={{ fontFamily: "var(--font-mono)", fontWeight: 500, color: "#fff", fontSize: "1rem", marginTop: 4 }}>11 of 14</p>
-                        </div>
-                    </div>
-                    <p style={{ fontFamily: "var(--font-sans)", fontWeight: 400, color: "var(--ink-50)", fontSize: "0.7rem", marginTop: 24, fontStyle: "italic" }}>This is a real demo case from eCourts data.</p>
-                </div>
-            </section>
+        <div style={{ background: "var(--ink-100)" }}>
+            <HeroSection setPage={setPage} />
 
             {/* STATS BAND */}
             <div ref={statRef} style={{ background: "var(--ink-100)", padding: "40px clamp(24px,4vw,80px)", overflow: "hidden" }}>
