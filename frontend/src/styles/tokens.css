@@ -1,0 +1,42 @@
+/* Design tokens. Text colours on light backgrounds meet WCAG AA; inside a `.dark` subtree the muted
+   tokens are remapped to light values so the same class names stay readable on black. */
+:root {
+  --ink-100: #0a0a0a;
+  --ink-90: #1a1a1a;
+  --ink-70: #404040;
+  --ink-50: #595959; /* muted text on light — 7:1 on white */
+  --ink-30: #ababab; /* borders / decoration on light */
+  --ink-15: #d6d6d6;
+  --ink-08: #ebebeb;
+  --ink-04: #f5f5f5;
+  --ink-00: #ffffff;
+  --accent: #d4760a; /* alert accent on dark */
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Epilogue', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --gutter: clamp(16px, 4vw, 80px);
+  --nav-h: 64px;
+}
+
+.dark {
+  --ink-50: #a8a8a8; /* muted text on black — 8:1 */
+  --ink-30: #d0d0d0;
+  color: var(--ink-00);
+}
+
+/* Reset the muted tokens for a light block nested inside a `.dark` one. */
+.light {
+  --ink-50: #595959;
+  --ink-30: #ababab;
+  color: var(--ink-90);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; scroll-padding-top: calc(var(--nav-h) + 8px); }
+body { font-family: var(--font-sans); background: var(--ink-00); color: var(--ink-90); -webkit-font-smoothing: antialiased; }
+img, canvas, svg { max-width: 100%; }
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+a { color: inherit; }
