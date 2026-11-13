@@ -1,30 +1,38 @@
-import { useState } from "react";
-import { FontLoader } from "./components/Shared";
-import LandingPage from "./components/LandingPage";
-import FormPage from "./components/FormPage";
-import CaseDashboard from "./components/CaseDashboard";
+import { Link, Route, Routes } from 'react-router-dom';
+import { Footer, ScrollManager, SiteNav } from './components/Shared';
+import { useDocumentTitle } from './utils';
+import LandingPage from './components/LandingPage';
+import FormPage from './components/FormPage';
+import CaseDashboard from './components/CaseDashboard';
+
+function NotFound() {
+  useDocumentTitle('Page not found');
+  return (
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <SiteNav />
+      <main id="main" style={{ flex: 1, display: 'grid', placeItems: 'center', padding: 24, textAlign: 'center' }}>
+        <div>
+          <p className="eyebrow">404</p>
+          <h1 className="serif" style={{ fontSize: '2rem', margin: '12px 0 24px' }}>This page does not exist.</h1>
+          <Link to="/track" className="btn">Track a case</Link>
+        </div>
+      </main>
+      <Footer />
+    </div>
+  );
+}
 
 export default function App() {
-  const [page, setPage] = useState("landing");
-  const [caseData, setCaseData] = useState(null);
-
-  const handleCaseLoaded = (data, cnr) => {
-    setCaseData(data);
-  };
-
   return (
     <>
-      <FontLoader />
-      {page === "landing" && <LandingPage setPage={setPage} />}
-      {page === "form" && (
-        <FormPage setPage={setPage} onCaseLoaded={handleCaseLoaded} />
-      )}
-      {page === "case" && caseData && (
-        <CaseDashboard setPage={setPage} caseData={caseData} />
-      )}
-      {page === "case" && !caseData && (
-        <FormPage setPage={setPage} onCaseLoaded={handleCaseLoaded} />
-      )}
+      <a href="#main" className="skip-link">Skip to content</a>
+      <ScrollManager />
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/track" element={<FormPage />} />
+        <Route path="/case/:cnr" element={<CaseDashboard />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
     </>
   );
 }
